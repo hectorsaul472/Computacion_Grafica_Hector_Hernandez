@@ -1,6 +1,6 @@
-//Previo #6
+//Practica #6
 //Hernández Saldívar Héctor Saúl
-//fecha de entrega: 21 de septiembre de 2026
+//fecha de entrega: 27 de septiembre de 2026
 //319276017
 
 // Std. Includes
@@ -59,7 +59,7 @@ int main( )
     glfwWindowHint( GLFW_RESIZABLE, GL_FALSE );
     
     // Create a GLFWwindow object that we can use for GLFW's functions
-    GLFWwindow *window = glfwCreateWindow( WIDTH, HEIGHT, "Previo 6 Hector Hernandez", nullptr, nullptr );
+    GLFWwindow *window = glfwCreateWindow( WIDTH, HEIGHT, "Practica 6 Hector Hernandez", nullptr, nullptr );
     
     if ( nullptr == window )
     {
@@ -100,7 +100,11 @@ int main( )
     
     // Load models
     Model dog((char*)"Models/RedDog.obj");
-    Model gun((char*)"Models/Air_Gun-Wavefront OBJ.obj");
+    Model meteor((char*)"Models/Asteroid_Small_6X.obj");
+    Model casco((char*)"Models/spaceman.obj");
+    Model planeta((char*)"Models/planet1+obj.obj");
+    Model estrella((char*)"Models/Star_round.obj");
+    Model tierra((char*)"Models/earth lp.obj");
     glm::mat4 projection = glm::perspective( camera.GetZoom( ), ( float )SCREEN_WIDTH/( float )SCREEN_HEIGHT, 0.1f, 100.0f );
 
     
@@ -133,14 +137,39 @@ int main( )
         glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
         dog.Draw(shader);
 
-        model = glm::translate(model, glm::vec3(-3.0f, 0.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
-        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(model));
-        gun.Draw(shader);
+       
+        glm::mat4 modelMeteor1(1.0f);
+        modelMeteor1 = glm::translate(modelMeteor1, glm::vec3(2.0f, 1.0f, -15.0f));
+        modelMeteor1 = glm::rotate(modelMeteor1, glm::radians(30.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+        modelMeteor1 = glm::scale(modelMeteor1, glm::vec3(2.0f, 2.0f, 2.0f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(modelMeteor1));
+        meteor.Draw(shader);
 
+
+        glm::mat4 modelMeteor2(1.0f);
+        modelMeteor2 = glm::translate(modelMeteor2, glm::vec3(-4.0f, -6.0f, -15.0f));
+        modelMeteor1 = glm::rotate(modelMeteor1, glm::radians(50.0f), glm::vec3(1.0f, 1.0f, 0.0f));
+        modelMeteor2 = glm::scale(modelMeteor2, glm::vec3(2.0f, 2.0f, 2.0f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(modelMeteor2));
+        meteor.Draw(shader);
+
+        glm::mat4 modelCasco(1.0f);
+        modelCasco = glm::translate(modelCasco, glm::vec3(0.04f, -0.1, -0.1f));
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(modelCasco));
+        casco.Draw(shader);
+
+        glm::mat4 modelPlaneta(1.0f);
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(modelPlaneta));
+        planeta.Draw(shader);
+    
+        glm::mat4 modelEstrella(1.0f);
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(modelEstrella));
+        estrella.Draw(shader);
+
+        glm::mat4 modelTierra(1.0f);
+        glUniformMatrix4fv(glGetUniformLocation(shader.Program, "model"), 1, GL_FALSE, glm::value_ptr(modelTierra));
+        tierra.Draw(shader);
         
-
-
         // Swap the buffers
         glfwSwapBuffers( window );
     }
