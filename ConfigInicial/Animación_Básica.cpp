@@ -1,6 +1,6 @@
-//Previo #10
+//Práctica #10
 //Hernández Saldívar Héctor Saúl
-//fecha de entrega: 20 de octubre de 2026
+//fecha de entrega: 21 de octubre de 2026
 //319276017
 #include <iostream>
 #include <cmath>
@@ -104,11 +104,8 @@ float vertices[] = {
 
 glm::vec3 Light1 = glm::vec3(0);
 //Anim
-float ballOffsetY = 0.0f; 
-float ballOffsetZ = 0.0f; 
-float animTime = 0.0f;    
+float rotBall = 90.0f;
 bool AnimBall = false;
-
 
 // Deltatime
 GLfloat deltaTime = 0.0f;	// Time between current frame and last frame
@@ -126,7 +123,7 @@ int main()
 	glfwWindowHint(GLFW_RESIZABLE, GL_FALSE);*/
 
 	// Create a GLFWwindow object that we can use for GLFW's functions
-	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Previo 10 Hector Hernandez", nullptr, nullptr);
+	GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Practica 10 Hector Hernandez", nullptr, nullptr);
 
 	if (nullptr == window)
 	{
@@ -291,18 +288,30 @@ int main()
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		Piso.Draw(lightingShader);
 
-		model = glm::mat4(1);
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+		float curvaSalto = pow(abs(cos(glm::radians(rotBall))), 16.0f);
+		float dogJump = curvaSalto * 0.35f;
+		float ballBounce = 0.35f + abs(sin(glm::radians(rotBall))) * 0.8f;
+		float dogPitch = sin(glm::radians(rotBall * 2.0f)) * 20.0f;
+		float ballPitch = -sin(glm::radians(rotBall * 2.0f)) * 45.0f;
+
+		model = glm::mat4(1.0f);
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "transparency"), 0);
+		model = glm::rotate(model, glm::radians(-rotBall), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(2.0f, dogJump, 0.0f));
+		model = glm::rotate(model, glm::radians(dogPitch), glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		Dog.Draw(lightingShader);
 
 		model = glm::mat4(1.0f);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		model = glm::translate(model, glm::vec3(0.0f, 0.01f + ballOffsetY, 0.1f));
-		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		glUniform1i(glGetUniformLocation(lightingShader.Program, "transparency"), 1);
+		model = glm::rotate(model, glm::radians(rotBall), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::translate(model, glm::vec3(2.0f, ballBounce, 0.0f));
+		model = glm::rotate(model, glm::radians(ballPitch), glm::vec3(1.0f, 0.0f, 0.0f));
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 		Ball.Draw(lightingShader);
+
 		glDisable(GL_BLEND);
 		glBindVertexArray(0);
 	
@@ -450,9 +459,7 @@ void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mode
 void Animation() {
 	if (AnimBall)
 	{
-		animTime += deltaTime;
-		float ciclo = (-cos(animTime * 2.0f) + 1.0f) / 2.0f;
-		ballOffsetY = ciclo * 1.5f;
+		rotBall += 100.0f * deltaTime;
 	}
 	
 }
